@@ -1,0 +1,25 @@
+#!/bin/bash
+
+root=$(cd "$(dirname $BASH_SOURCE)"; pwd)
+
+main() {
+  cd "$root"
+
+  rsync -a --del src/ build-dir/
+  mkdir -p bin
+
+  cd build-dir
+  local program
+  for file in $(ls -1 | egrep '.asm$' | egrep -v '^_'); do
+    compile $(basename "$file" .asm)
+  done
+  cd -
+  rm -fr build-dir
+}
+
+compile() {
+  nasm -f bin -o ../bin/"$1" "$1".asm
+  chmod +x ../bin/"$1"
+}
+
+main
