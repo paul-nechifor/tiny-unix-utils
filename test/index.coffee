@@ -4,8 +4,8 @@ require('chai').should()
 root = __dirname + '/..'
 
 # Helper methods.
-runCommands = (cmd, cb) ->
-  exec cmd, (err, stdout, stderr) ->
+runCommands = (cmds, cb) ->
+  exec cmds, (err, stdout, stderr) ->
     cb [
       if err is null then 0 else err.code
       stdout
@@ -13,6 +13,12 @@ runCommands = (cmd, cb) ->
 
 runProgram = (program, cb) ->
   runCommands root + '/bin/' + program, cb
+
+runFromBin = (cmds, cb) ->
+  runCommands """
+    cd '#{root}/bin'
+    #{cmds}
+  """, cb
 
 compileProgram = (name, cb) ->
   exec """
@@ -51,4 +57,10 @@ describeProgram 'true', ->
   it 'should return 0', (done) ->
     runProgram 'true', (ret) ->
       ret.should.deep.equal [0, '']
+      done()
+
+describeProgram 'yes', ->
+  it 'should return one y when requested and return 0', (done) ->
+    runFromBin 'yes | head -n 1', (ret) ->
+      ret.should.deep.equal [0, 'y\n']
       done()
