@@ -5,6 +5,11 @@ root=$(cd "$(dirname $BASH_SOURCE)"; pwd)
 main() {
   cd "$root"
 
+  if [[ $1 ]]; then
+    "$@"
+    return
+  fi
+
   rsync -a --del src/ build-dir/
   mkdir -p bin
 
@@ -22,4 +27,9 @@ compile() {
   chmod +x ../bin/"$1"
 }
 
-main
+test() {
+  export PATH+=":$root/node_modules/.bin"
+  mocha --compilers coffee:coffee-script/register
+}
+
+main "$@"

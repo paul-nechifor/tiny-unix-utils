@@ -60,7 +60,7 @@ describeProgram 'true', ->
       done()
 
 describeProgram 'yes', ->
-  it 'should return one y when requested and return 0', (done) ->
+  it 'should write 1 y when requested and return 0', (done) ->
     runFromBin 'yes | head -n 1', (ret) ->
       ret.should.deep.equal [0, 'y\n']
       done()
