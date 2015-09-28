@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "author": "Paul Nechifor <paul@nechifor.net> (http://nechifor.net/)",
   "scripts": {
-    "test": "mocha --compilers coffee:coffee-script/register"
+    "test": "./run-tests"
   },
   "dependencies": {
     "coffee-script": "~1.10.0",
