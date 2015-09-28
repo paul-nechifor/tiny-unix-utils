@@ -85,3 +85,29 @@ describeProgram 'touch', ->
         items.should.contain 'asdf002'
         items.should.contain 'asdf003'
         done()
+
+class Template
+  constructor: (@name, @str) ->
+
+  run: (replace, cb) ->
+    str = @str
+    for key, value of replace
+      str = str.replace "{{ #{key} }}", value
+    newName = @name.replace '.tpl.asm', ''
+    fs.writeFileSync root + '/build-dir/' + newName + '.asm', str
+    compileProgram newName, (err) ->
+      return cb err if err
+      runProgram newName, cb
+
+loadTemplate = (path) ->
+  new Template path, fs.readFileSync root + '/src/' + path, encoding: 'utf8'
+
+describe '_u64_to_str', ->
+  template = loadTemplate '_u64_to_str_test.tpl.asm'
+  numbersToTest = [0, 1, 7]
+  for n in numbersToTest
+    do (n) ->
+      it 'should show ' + n, (done) ->
+        template.run {number: '' + n}, (ret) ->
+          ret.should.deep.equal [0, '' + n]
+          done()

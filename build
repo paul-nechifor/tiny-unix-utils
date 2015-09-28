@@ -25,7 +25,7 @@ main() {
 
 test() {
   export PATH+=":$root/node_modules/.bin"
-  mocha --compilers coffee:coffee-script/register
+  mocha -s 500 --compilers coffee:coffee-script/register
 }
 
 main "$@"
