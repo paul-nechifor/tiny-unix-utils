@@ -1,15 +1,16 @@
-%include "_elf_start.asm"
+section .text
 
+global _start
 _start:
   ; Set ebx to the number of arguments without program name.
-  pop edx
+  pop rdx
   ;dec edx ; I don't understant why I don't need this.
 
 loopBack:
   mov eax, edx
   jz exit
 
-  pop ebx ; Get an argument
+  pop rbx ; Get an argument
 
   ; Calling creat() syscall with filename in ebx and permissions in ecx.
   mov eax, 8
@@ -23,5 +24,3 @@ exit:
   mov eax, 1 ; The syscall for exit
   mov ebx, 0
   int 0x80
-
-%include "_elf_end.asm"

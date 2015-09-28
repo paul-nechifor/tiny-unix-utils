@@ -27,8 +27,8 @@ runFromBin = (cmds, cb) ->
 compileProgram = (name, cb) ->
   exec """
     cd '#{root}/build-dir'
-    nasm -f bin -o ../bin/#{name} #{name}.asm
-    chmod +x ../bin/#{name}
+    ../scripts/a #{name}.asm
+    mv #{name} ../bin
   """, cb
 
 before (cb) ->

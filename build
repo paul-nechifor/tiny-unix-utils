@@ -16,15 +16,11 @@ main() {
   cd build-dir
   local program
   for file in $(ls -1 | egrep '.asm$' | egrep -v '^_'); do
-    compile $(basename "$file" .asm)
+    ../scripts/a "$file"
+    mv "$(basename "$file" .asm)" ../bin
   done
-  cd -
+  cd "$root"
   rm -fr build-dir
-}
-
-compile() {
-  nasm -f bin -o ../bin/"$1" "$1".asm
-  chmod +x ../bin/"$1"
 }
 
 test() {

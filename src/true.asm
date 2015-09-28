@@ -1,9 +1,7 @@
-%include "_elf_start.asm"
+section .text
 
+global _start
 _start:
-  mov bl, 0
-  xor eax, eax
-  inc eax
+  mov eax, 1
+  mov ebx, 0
   int 0x80
-
-%include "_elf_end.asm"

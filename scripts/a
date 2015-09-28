@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+main() {
+    local name=$(basename "$1" .asm)
+    nasm -f elf64 "$1"
+    gcc -o "$name" "$name".o -nostartfiles -nostdlib -nodefaultlibs
+    strip --strip-all "$name"
+    strip --remove-section=.note.gnu.build-id "$name"
+    rm "$name".o
+}
+
+main "$@"
