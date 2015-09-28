@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -e
+
 main() {
     local name=$(basename "$1" .asm)
     nasm -f elf64 "$1"
