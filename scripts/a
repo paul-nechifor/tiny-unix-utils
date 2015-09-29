@@ -4,10 +4,16 @@ set -e
 
 main() {
     local name=$(basename "$1" .asm)
-    nasm -f elf64 "$1"
-    gcc -o "$name" "$name".o -nostartfiles -nostdlib -nodefaultlibs
-    strip --strip-all "$name"
-    strip --remove-section=.note.gnu.build-id "$name"
+    if [[ "$2" == '--debug' ]]; then
+        nasm -g -f elf64 "$1"
+    else
+        nasm -f elf64 "$1"
+    fi
+    ld -o "$name" "$name".o
+    if [[ "$2" != '--debug' ]]; then
+        strip --strip-all "$name"
+        strip --remove-section=.note.gnu.build-id "$name"
+    fi
     rm "$name".o
 }
 
