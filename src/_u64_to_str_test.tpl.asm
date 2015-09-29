@@ -1,6 +1,6 @@
 section .data
 
-msg: times 30 db 0
+msg: times 21 db 0
 
 %include "_u64_to_str.asm"
 

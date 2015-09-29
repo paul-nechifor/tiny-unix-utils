@@ -32,10 +32,11 @@ flip_numbers:
   je return_now
 
   mov r8, rbx
-  dec r8
+  sub r8, 2
   shr r8, 1
-  mov r9, r8
-  inc r9
+  mov r9, rbx
+  sub r9, r8
+  dec r9
 
 flip_next_digits:
   cmp r8, 0
