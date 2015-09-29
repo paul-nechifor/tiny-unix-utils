@@ -27,8 +27,8 @@ runFromBin = (cmds, cb) ->
 compileProgram = (name, cb) ->
   exec """
     cd '#{root}/build-dir'
-    ../scripts/a #{name}.asm
-    mv #{name} ../bin
+    ../scripts/a #{name}.asm --debug
+    cp #{name} ../bin
   """, cb
 
 before (cb) ->
@@ -69,22 +69,22 @@ describeProgram 'yes', ->
       ret.should.deep.equal [0, 'y\n']
       done()
 
-describeProgram 'touch', ->
-  it 'should touch one "asdf-fdsa" file', (done) ->
-    runProgram 'touch asdf-fdsa', (ret) ->
-      fs.readdir root + '/bin', (err, items) ->
-        return done err if err
-        items.should.contain 'asdf-fdsa'
-        done()
+# describeProgram 'touch', ->
+#   it 'should touch one "asdf-fdsa" file', (done) ->
+#     runProgram 'touch asdf-fdsa', (ret) ->
+#       fs.readdir root + '/bin', (err, items) ->
+#         return done err if err
+#         items.should.contain 'asdf-fdsa'
+#         done()
 
-  it 'should touch three files', (done) ->
-    runProgram 'touch asdf001 asdf003 asdf002', (ret) ->
-      fs.readdir root + '/bin', (err, items) ->
-        return done err if err
-        items.should.contain 'asdf001'
-        items.should.contain 'asdf002'
-        items.should.contain 'asdf003'
-        done()
+#   it 'should touch three files', (done) ->
+#     runProgram 'touch asdf001 asdf003 asdf002', (ret) ->
+#       fs.readdir root + '/bin', (err, items) ->
+#         return done err if err
+#         items.should.contain 'asdf001'
+#         items.should.contain 'asdf002'
+#         items.should.contain 'asdf003'
+#         done()
 
 class Template
   constructor: (@name, @str) ->
@@ -104,7 +104,7 @@ loadTemplate = (path) ->
 
 describe '_u64_to_str', ->
   template = loadTemplate '_u64_to_str_test.tpl.asm'
-  numbersToTest = [0, 1, 7]
+  numbersToTest = [0, 1, 7, 123456]
   for n in numbersToTest
     do (n) ->
       it 'should show ' + n, (done) ->

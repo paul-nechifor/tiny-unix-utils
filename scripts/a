@@ -5,7 +5,7 @@ set -e
 main() {
     local name=$(basename "$1" .asm)
     if [[ "$2" == '--debug' ]]; then
-        nasm -g -f elf64 "$1"
+        nasm -ggdb  -f elf64 "$1"
     else
         nasm -f elf64 "$1"
     fi
