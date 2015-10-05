@@ -63,29 +63,6 @@ describeProgram 'true', ->
       ret.should.deep.equal [0, '']
       done()
 
-describeProgram 'yes', ->
-  it 'should write 1 y when requested and return 0', (done) ->
-    runFromBin 'yes | head -n 1', (ret) ->
-      ret.should.deep.equal [0, 'y\n']
-      done()
-
-describeProgram 'touch', ->
-  it 'should touch one "asdf-fdsa" file', (done) ->
-    runProgram 'touch asdf-fdsa', (ret) ->
-      fs.readdir root + '/bin', (err, items) ->
-        return done err if err
-        items.should.contain 'asdf-fdsa'
-        done()
-
-  it 'should touch three files', (done) ->
-    runProgram 'touch asdf001 asdf003 asdf002', (ret) ->
-      fs.readdir root + '/bin', (err, items) ->
-        return done err if err
-        items.should.contain 'asdf001'
-        items.should.contain 'asdf002'
-        items.should.contain 'asdf003'
-        done()
-
 class Template
   constructor: (@name, @str) ->
 
