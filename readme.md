@@ -12,6 +12,7 @@ Run the tests with:
 
 ## TODO
 
+* Convert every thing to the C calling convention.
 * Create a common location for common things like `sys_call_creat equ 8`.
 * Split tests into files and extract common testing utilities.
 
