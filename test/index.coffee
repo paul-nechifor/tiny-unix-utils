@@ -63,6 +63,21 @@ describeProgram 'true', ->
       ret.should.deep.equal [0, '']
       done()
 
+describeProgram 'cat', ->
+  it 'should work with a single character', (done) ->
+    runFromBin 'echo -n a | ./cat', (ret) ->
+      ret.should.deep.equal [0, 'a']
+      done()
+  it 'should work with a new lines', (done) ->
+    runFromBin 'echo word1 word2 | ./cat', (ret) ->
+      ret.should.deep.equal [0, 'word1 word2\n']
+      done()
+  it 'should work with large files', (done) ->
+    x10000 = ('x' for x in [0 .. 10000]).join ''
+    runFromBin "echo -n #{x10000} | ./cat", (ret) ->
+      ret.should.deep.equal [0, x10000]
+      done()
+
 class Template
   constructor: (@name, @str) ->
 
