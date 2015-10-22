@@ -10,6 +10,7 @@ main() {
         nasm -f elf64 "$1"
     fi
     ld -o "$name" "$name".o
+    # ld -dynamic-linking /lib64/ld-linux-x86-64.so.2 -o "$name" "$name".o
     if [[ "$2" != '--debug' ]]; then
         strip --strip-all "$name"
         strip --remove-section=.note.gnu.build-id "$name"
