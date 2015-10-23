@@ -5,7 +5,7 @@ root=$(cd "$(dirname $BASH_SOURCE)"; pwd)
 main() {
   cd "$root"
   export PATH+=":$root/node_modules/.bin"
-  mocha -s 500 --compilers coffee:coffee-script/register
+  mocha -s 500 --compilers coffee:coffee-script/register -g "${1:-.*}"
 }
 
 main "$@"

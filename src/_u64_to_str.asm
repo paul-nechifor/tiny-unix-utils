@@ -10,6 +10,7 @@ u64_to_str:
   jmp return_now
 
 start_algorithm:
+  xor rdx, rdx
   mov rcx, 10
   div rcx
   add dl, 48
@@ -19,7 +20,7 @@ repeat_loop:
   cmp rax, 0
   je flip_numbers
 
-  mov rdx, 0
+  xor rdx, rdx
   mov rcx, 10
   div rcx
   add dl, 48

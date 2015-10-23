@@ -73,9 +73,24 @@ describeProgram 'cat', ->
       ret.should.deep.equal [0, 'word1 word2\n']
       done()
   it 'should work with large files', (done) ->
-    x10000 = ('x' for x in [0 .. 10000]).join ''
+    x10000 = ('x' for x in [1 .. 10000]).join ''
     runFromBin "echo -n #{x10000} | ./cat", (ret) ->
       ret.should.deep.equal [0, x10000]
+      done()
+
+describeProgram 'wc', ->
+  it 'should work with no characters', (done) ->
+    runFromBin 'echo -n | ./wc', (ret) ->
+      ret.should.deep.equal [0, '0']
+      done()
+  it 'should work with a single character', (done) ->
+    runFromBin 'echo -n a | ./wc', (ret) ->
+      ret.should.deep.equal [0, '1']
+      done()
+  it 'should work with a larger file', (done) ->
+    x12345 = ('x' for x in [1 .. 12345]).join ''
+    runFromBin "echo -n #{x12345} | ./wc", (ret) ->
+      ret.should.deep.equal [0, '12345']
       done()
 
 class Template
