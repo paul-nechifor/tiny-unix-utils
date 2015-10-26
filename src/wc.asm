@@ -3,11 +3,12 @@
 section .data
 
 byte_count: dq 0
+line_count: dq 0
 
 section .bss
 
 buffer: resb small_buf_size
-output_str: resb 21
+output_str: resb 100
 
 section .text
 
@@ -26,18 +27,48 @@ _start:
 
   add [byte_count], rax
 
+  ; Loop over everything that was read and count the line feeds.
+  mov rcx, rax
+count_line_feeds:
+  cmp byte [buffer + rcx], chr_line_feed
+  jne skip_increase_line_feeds
+  inc qword [line_count]
+skip_increase_line_feeds:
+  loop count_line_feeds
+
   jmp _start
 
 read_finished:
+  ; Add the first number to `output_str`.
   mov rax, [byte_count]
   mov rbp, output_str
   call u64_to_str
+
+  ; Add a space after the number and move `rsi` after the space. `rsi` is then
+  ; used to write the second number. `rdi` holds the length of the string.
+  mov rsi, output_str
+  mov rdi, rbp
+  inc rdi
+  add rsi, rbp
+  mov byte [rsi], chr_space
+  inc rsi
+
+  ; Write the second number.
+  mov rax, [line_count]
+  mov rbp, rsi
+  call u64_to_str
+
+  ; Add a line feed at the end of it all.
+  add rsi, rbp
+  mov byte [rsi], chr_line_feed
+  add rdi, rbp
+  inc rdi
 
   ; Write the number.
   mov rax, syscall_write
   mov rbx, stdout_fileno
   mov rcx, output_str
-  mov rdx, rbp
+  mov rdx, rdi
   syscall
 
 exit:

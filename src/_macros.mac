@@ -14,4 +14,7 @@
 
 %define exit_success_code 0
 
+%define chr_space 32
+%define chr_line_feed 10
+
 %endif

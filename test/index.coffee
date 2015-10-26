@@ -81,16 +81,20 @@ describeProgram 'cat', ->
 describeProgram 'wc', ->
   it 'should work with no characters', (done) ->
     runFromBin 'echo -n | ./wc', (ret) ->
-      ret.should.deep.equal [0, '0']
+      ret.should.deep.equal [0, '0 0\n']
       done()
   it 'should work with a single character', (done) ->
     runFromBin 'echo -n a | ./wc', (ret) ->
-      ret.should.deep.equal [0, '1']
+      ret.should.deep.equal [0, '1 0\n']
       done()
   it 'should work with a larger file', (done) ->
     x12345 = ('x' for x in [1 .. 12345]).join ''
     runFromBin "echo -n #{x12345} | ./wc", (ret) ->
-      ret.should.deep.equal [0, '12345']
+      ret.should.deep.equal [0, '12345 0\n']
+      done()
+  it 'should work with a single line', (done) ->
+    runFromBin "echo hello | ./wc", (ret) ->
+      ret.should.deep.equal [0, '6 1\n']
       done()
 
 class Template
