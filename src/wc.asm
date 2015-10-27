@@ -3,6 +3,7 @@
 section .data
 
 byte_count: dq 0
+word_count: dq 0
 line_count: dq 0
 
 section .bss
@@ -39,32 +40,49 @@ skip_increase_line_feeds:
   jmp _start
 
 read_finished:
-  ; Add the first number to `output_str`.
-  mov rax, [byte_count]
-  mov rbp, output_str
-  call u64_to_str
-
-  ; Add a space after the number and move `rsi` after the space. `rsi` is then
-  ; used to write the second number. `rdi` holds the length of the string.
+  ; From here:
+  ;
+  ; * `rsi` points to the next character to be written.
+  ; * `rdi` is the lenght of the string (its actual asignment is lower though).
   mov rsi, output_str
+
+  ; Add the first number to `output_str` and increase length and the write
+  ; pointer.
+  mov rax, [byte_count]
+  mov rbp, rsi
+  call u64_to_str
   mov rdi, rbp
-  inc rdi
   add rsi, rbp
+
+  ; Add a space.
   mov byte [rsi], chr_space
+  inc rdi
   inc rsi
 
   ; Write the second number.
+  mov rax, [word_count]
+  mov rbp, rsi
+  call u64_to_str
+  add rdi, rbp
+  add rsi, rbp
+
+  ; Add a space.
+  mov byte [rsi], chr_space
+  inc rdi
+  inc rsi
+
+  ; Write the third number.
   mov rax, [line_count]
   mov rbp, rsi
   call u64_to_str
+  add rdi, rbp
+  add rsi, rbp
 
   ; Add a line feed at the end of it all.
-  add rsi, rbp
   mov byte [rsi], chr_line_feed
-  add rdi, rbp
   inc rdi
 
-  ; Write the number.
+  ; Write the line to stdout.
   mov rax, syscall_write
   mov rbx, stdout_fileno
   mov rcx, output_str
