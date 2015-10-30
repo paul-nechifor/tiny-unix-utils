@@ -12,12 +12,6 @@ runCommands = (cmds, cb) ->
       stdout
     ]
 
-runProgram = (program, cb) ->
-  runCommands """
-    cd '#{root}/bin'
-    ./#{program}
-  """, cb
-
 runFromBin = (cmds, cb) ->
   runCommands """
     cd '#{root}/bin'
@@ -53,13 +47,13 @@ describeProgram = (name, func) ->
 
 describeProgram 'false', ->
   it 'should return 1', (done) ->
-    runProgram 'false', (ret) ->
+    runFromBin './false', (ret) ->
       ret.should.deep.equal [1, '']
       done()
 
 describeProgram 'true', ->
   it 'should return 0', (done) ->
-    runProgram 'true', (ret) ->
+    runFromBin './true', (ret) ->
       ret.should.deep.equal [0, '']
       done()
 
@@ -85,16 +79,16 @@ describeProgram 'wc', ->
       done()
   it 'should work with a single character', (done) ->
     runFromBin 'echo -n a | ./wc', (ret) ->
-      ret.should.deep.equal [0, '1 0 0\n']
+      ret.should.deep.equal [0, '1 1 0\n']
       done()
   it 'should work with a larger file', (done) ->
     x12345 = ('x' for x in [1 .. 12345]).join ''
     runFromBin "echo -n #{x12345} | ./wc", (ret) ->
-      ret.should.deep.equal [0, '12345 1 0\n']
+      ret.should.deep.equal [0, '12345 6 0\n']
       done()
   it 'should work with a single line', (done) ->
     runFromBin "echo hello | ./wc", (ret) ->
-      ret.should.deep.equal [0, '6 1 1\n']
+      ret.should.deep.equal [0, '6 3 1\n']
       done()
 
 class Template
@@ -108,7 +102,7 @@ class Template
     fs.writeFileSync root + '/build-dir/' + newName + '.asm', str
     compileProgram newName, (err) ->
       return cb err if err
-      runProgram newName, cb
+      runFromBin './' + newName, cb
 
 loadTemplate = (path) ->
   new Template path, fs.readFileSync root + '/src/' + path, encoding: 'utf8'
