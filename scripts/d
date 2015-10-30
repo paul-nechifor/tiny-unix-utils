@@ -26,6 +26,7 @@ def cleanup(assembly):
         (r'\t\.cfi_.*\n', ''),
         (r'DWORD PTR', 'dword'),
         (r'WORD PTR', 'word'),
+        (r'BYTE PTR', 'byte'),
     ] + [(r'\t\.%s.*\n' % x, '') for x in dot_removes]
     for regex, repl in regexes:
         assembly = re.sub(regex, repl, assembly)

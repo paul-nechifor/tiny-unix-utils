@@ -5,6 +5,7 @@ section .data
 byte_count: dq 0
 word_count: dq 0
 line_count: dq 0
+prev_char_is_letter: db 0
 
 section .bss
 
@@ -28,13 +29,54 @@ _start:
 
   add [byte_count], rax
 
-  ; Loop over everything that was read and count the line feeds.
+  ; Loop over everything that was read and then count the line feeds. Here:
+  ;
+  ; * `al` holds the current caracter to be compared.
+  ; * `rcx` is used for looping over the buffer (the buffer is traversed in
+  ;   reverse).
   mov rcx, rax
+  mov rbx, 0
+
 count_line_feeds:
-  cmp byte [buffer + rcx], chr_line_feed
-  jne skip_increase_line_feeds
+  xor rax, rax
+  mov al, [buffer + rcx]
+  cmp al, chr_line_feed
+  jne dont_increase_line_feeds
   inc qword [line_count]
-skip_increase_line_feeds:
+
+dont_increase_line_feeds:
+
+  ; The next stage is figuring out if a character is a letter (i.e. matches
+  ; `[A-Za-z_]`).
+  cmp al, chr_a_lower
+  jb compare_to_uppers
+  cmp al, chr_z_lower
+  jbe this_character_is_a_letter
+
+compare_to_uppers:
+  cmp al, chr_a_upper
+  jb compare_to_underscore
+  cmp al, chr_z_upper
+  jbe this_character_is_a_letter
+
+compare_to_underscore:
+  cmp al, chr_underscore
+  jne this_character_isnt_a_letter
+
+this_character_is_a_letter:
+  mov dl, byte [prev_char_is_letter]
+  mov byte [prev_char_is_letter], 1
+  cmp dl, 0
+  je increase_word_count
+  jmp continue_this_loop
+
+this_character_isnt_a_letter:
+  mov byte [prev_char_is_letter], 0
+
+increase_word_count
+  inc qword [word_count]
+
+continue_this_loop:
   loop count_line_feeds
 
   jmp _start

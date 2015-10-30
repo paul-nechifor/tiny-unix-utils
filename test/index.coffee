@@ -90,11 +90,11 @@ describeProgram 'wc', ->
   it 'should work with a larger file', (done) ->
     x12345 = ('x' for x in [1 .. 12345]).join ''
     runFromBin "echo -n #{x12345} | ./wc", (ret) ->
-      ret.should.deep.equal [0, '12345 0 0\n']
+      ret.should.deep.equal [0, '12345 1 0\n']
       done()
   it 'should work with a single line', (done) ->
     runFromBin "echo hello | ./wc", (ret) ->
-      ret.should.deep.equal [0, '6 0 1\n']
+      ret.should.deep.equal [0, '6 1 1\n']
       done()
 
 class Template

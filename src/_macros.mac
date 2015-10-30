@@ -16,5 +16,10 @@
 
 %define chr_space 32
 %define chr_line_feed 10
+%define chr_a_upper 65
+%define chr_z_upper 90
+%define chr_a_lower 97
+%define chr_z_lower 122
+%define chr_underscore 95
 
 %endif
