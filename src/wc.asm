@@ -73,7 +73,7 @@ this_character_isnt_a_letter:
   mov byte [prev_char_is_letter], 0
   jmp continue_this_loop
 
-increase_word_count
+increase_word_count:
   inc qword [word_count]
 
 continue_this_loop:
