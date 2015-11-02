@@ -31,7 +31,7 @@ _start:
 
   ; Loop over everything that was read and then count the line feeds. Here:
   ;
-  ; * `al` holds the current caracter to be compared.
+  ; * `al` holds the current caracter to be compared (it's set a little lower).
   ; * `rcx` is used for looping over the buffer (the buffer is traversed in
   ;   reverse).
   mov rcx, rax
@@ -39,11 +39,10 @@ _start:
 
 count_line_feeds:
   xor rax, rax
-  mov al, [buffer + rcx]
+  mov al, [buffer + rcx - 1]
   cmp al, chr_line_feed
   jne dont_increase_line_feeds
   inc qword [line_count]
-
 dont_increase_line_feeds:
 
   ; The next stage is figuring out if a character is a letter (i.e. matches
@@ -72,6 +71,7 @@ this_character_is_a_letter:
 
 this_character_isnt_a_letter:
   mov byte [prev_char_is_letter], 0
+  jmp continue_this_loop
 
 increase_word_count
   inc qword [word_count]
