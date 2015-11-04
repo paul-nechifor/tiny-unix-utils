@@ -3,11 +3,10 @@
 
 %define small_buf_size 4096
 
-%define syscall int 0x80
-
-%define syscall_exit 1
-%define syscall_read 3
-%define syscall_write 4
+# http://blog.rchapman.org/post/36801038863/linux-system-call-table-for-x86-64
+%define syscall_read 0
+%define syscall_write 1
+%define syscall_exit 60
 
 %define stdin_fileno 0
 %define stdout_fileno 1

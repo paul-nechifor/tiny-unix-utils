@@ -11,8 +11,8 @@ _start:
 
   ; Read from stdin into the buffer.
   mov rax, syscall_read
-  mov rbx, stdin_fileno
-  mov rcx, buffer
+  mov rdi, stdin_fileno
+  mov rsi, buffer
   mov rdx, small_buf_size
   syscall
 
@@ -25,13 +25,13 @@ _start:
 
   ; Write the same number of bytes to stdout.
   mov rax, syscall_write
-  mov rbx, stdout_fileno
-  mov rcx, buffer
+  mov rdi, stdout_fileno
+  mov rsi, buffer
   syscall
 
   jmp _start
 
 exit:
   mov rax, syscall_exit
-  mov rbx, exit_success_code
+  mov rdi, exit_success_code
   syscall

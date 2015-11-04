@@ -19,8 +19,8 @@ _start:
 
   ; Read from stdin into the buffer.
   mov rax, syscall_read
-  mov rbx, stdin_fileno
-  mov rcx, buffer
+  mov rdi, stdin_fileno
+  mov rsi, buffer
   mov rdx, small_buf_size
   syscall
 
@@ -124,16 +124,17 @@ read_finished:
   mov byte [rsi], chr_line_feed
   inc rdi
 
-  ; Write the line to stdout.
+  ; Write the line to stdout. The arguments for the call are out of order
+  ; because I've used `rdi`.
   mov rax, syscall_write
-  mov rbx, stdout_fileno
-  mov rcx, output_str
   mov rdx, rdi
+  mov rsi, output_str
+  mov rdi, stdout_fileno
   syscall
 
 exit:
   mov rax, syscall_exit
-  mov rbx, exit_success_code
+  mov rdi, exit_success_code
   syscall
 
 %include '_u64_to_str.asm'
