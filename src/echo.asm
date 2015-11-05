@@ -19,11 +19,21 @@ print_next_one:
   cmp rbx, rbp
   jae exit
 
+  ; Find the address of the end byte. In the syscall below, the length is
+  ; computed by subtracting the start address.
+  mov rdx, [rsp + 8 * rbx + 8]
+test_next_byte_for_zero:
+  cmp byte [rdx], 0
+  je done_computing_the_length
+  inc rdx
+  jmp test_next_byte_for_zero
+done_computing_the_length:
+
   ; Write the first character.
   mov rax, syscall_write
   mov rdi, stdout_fileno
   mov rsi, [rsp + 8 * rbx + 8]
-  mov rdx, 1
+  sub rdx, rsi
   syscall
 
   inc rbx
