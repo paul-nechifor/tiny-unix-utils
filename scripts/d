@@ -24,6 +24,7 @@ def cleanup(assembly):
     ]
     regexes = [
         (r'\t\.cfi_.*\n', ''),
+        (r'QWORD PTR', 'qword'),
         (r'DWORD PTR', 'dword'),
         (r'WORD PTR', 'word'),
         (r'BYTE PTR', 'byte'),
@@ -38,7 +39,16 @@ def cleanup(assembly):
 
 
 def compile(file, optimize=False):
-    args = ['gcc', '-S', '-std=c99', '-masm=intel', '-o', '-']
+    args = [
+        'gcc',
+        '-S',
+        '-std=c99',
+        '-masm=intel',
+        # Disable stack protector since it makes functions longer and so it
+        # makes their essence more difficult to understand.
+        '-fno-stack-protector',
+        '-o', '-',
+    ]
     if optimize:
         args.append('-O3')
     args.append(file)
