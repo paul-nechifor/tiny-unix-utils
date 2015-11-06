@@ -7,9 +7,9 @@ import sys
 
 def main():
     if len(sys.argv) > 2:
-        print(compile(sys.argv[1], optimize=True))
+        sys.stdout.write(compile(sys.argv[1], optimize=True))
     else:
-        print(cleanup(compile(sys.argv[1])))
+        sys.stdout.write(cleanup(compile(sys.argv[1])))
 
 
 def cleanup(assembly):
@@ -23,12 +23,15 @@ def cleanup(assembly):
         'type',
     ]
     regexes = [
-        (r'\t\.cfi_.*\n', ''),
+        (r'^\t', '  '),
+        (r'\n\t', '\n  '),
+        (r'\t', ' '),
+        (r'  \.cfi_.*\n', ''),
         (r'QWORD PTR', 'qword'),
         (r'DWORD PTR', 'dword'),
         (r'WORD PTR', 'word'),
         (r'BYTE PTR', 'byte'),
-    ] + [(r'\t\.%s.*\n' % x, '') for x in dot_removes]
+    ] + [(r'  \.%s.*\n' % x, '') for x in dot_removes]
     for regex, repl in regexes:
         assembly = re.sub(regex, repl, assembly)
     remove_one = [r'.LFB\d+', r'.LFE\d+']
