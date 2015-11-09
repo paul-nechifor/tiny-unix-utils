@@ -26,6 +26,8 @@ def cleanup(assembly):
         (r'^\t', '  '),
         (r'\n\t', '\n  '),
         (r'\t', ' '),
+        (r'\n  .string ', ' .string '),
+        (r'OFFSET FLAT:', ''),
         (r'  \.cfi_.*\n', ''),
         (r'QWORD PTR', 'qword'),
         (r'DWORD PTR', 'dword'),
