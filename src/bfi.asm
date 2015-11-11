@@ -47,6 +47,7 @@ load_instruction:
 
   cmp cl, ']'
   je instr_loop_back
+  jmp process_next_instruction
 
 instr_move_data_right:
   inc rbx
