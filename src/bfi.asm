@@ -4,8 +4,6 @@
 
 section .data
 
-program: db "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++.", 0
-
 section .bss
 tape:  resb 65535
 
@@ -14,7 +12,7 @@ section .text
 global _start
 _start:
   ; rax = pointer to the current instruction.
-  mov rax, program
+  mov rax, [rsp + 16]
   ; rbx = pointer to the tape (data).
   mov rbx, tape
   jmp load_instruction
@@ -44,6 +42,12 @@ load_instruction:
   cmp cl, '.'
   je instr_put_char
 
+  cmp cl, '['
+  je process_next_instruction
+
+  cmp cl, ']'
+  je instr_loop_back
+
 instr_move_data_right:
   inc rbx
   jmp process_next_instruction
@@ -69,6 +73,40 @@ instr_put_char:
   syscall
   pop rax
   jmp process_next_instruction
+
+instr_loop_back:
+  ; If the byte at the data head is 0, go to the next instruction.
+  cmp byte [rbx], 0
+  je process_next_instruction
+
+  ; In this case we need to loop back until we find the matching '[' for this
+  ; ']'. Since they can be nested we keep track of matching brackets by
+  ; incremeting on ']' and decrementing on '['. When we hit 0, we're there.
+  mov rdx, 1
+
+load_previous_instruction_until_the_match_is_found:
+  dec rax
+  mov cl, [rax]
+
+  cmp cl, '['
+  je dec_matching_brackets
+
+  cmp cl, ']'
+  je inc_matching_brackets
+
+  jmp load_previous_instruction_until_the_match_is_found
+
+dec_matching_brackets:
+  dec rdx
+  jmp check_if_we_have_the_correct_one
+inc_matching_brackets:
+  inc rdx
+  jmp check_if_we_have_the_correct_one
+
+check_if_we_have_the_correct_one:
+  cmp rdx, 0
+  je process_next_instruction
+  jmp load_previous_instruction_until_the_match_is_found
 
 exit:
   mov rax, syscall_exit
