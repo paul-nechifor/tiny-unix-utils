@@ -81,30 +81,23 @@ instr_loop_back:
   je process_next_instruction
 
   ; In this case we need to loop back until we find the matching '[' for this
-  ; ']'. Since they can be nested we keep track of matching brackets by
-  ; incremeting on ']' and decrementing on '['. When we hit 0, we're there.
+  ; ']'. Since they can be nested, we keep track of matching brackets by
+  ; incrementing on ']' and decrementing on '['. When we hit 0, we're there.
   mov rdx, 1
 
 load_previous_instruction_until_the_match_is_found:
   dec rax
   mov cl, [rax]
 
-  cmp cl, '['
-  je dec_matching_brackets
-
   cmp cl, ']'
-  je inc_matching_brackets
-
+  jne check_for_opening_bracket
+  inc rdx
   jmp load_previous_instruction_until_the_match_is_found
 
-dec_matching_brackets:
+check_for_opening_bracket:
+  cmp cl, '['
+  jne load_previous_instruction_until_the_match_is_found
   dec rdx
-  jmp check_if_we_have_the_correct_one
-inc_matching_brackets:
-  inc rdx
-  jmp check_if_we_have_the_correct_one
-
-check_if_we_have_the_correct_one:
   cmp rdx, 0
   je process_next_instruction
   jmp load_previous_instruction_until_the_match_is_found
