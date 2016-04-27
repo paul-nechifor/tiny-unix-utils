@@ -10,10 +10,6 @@ Run the tests with:
 
     ./run-tests # Or `npm test`.
 
-## TODO
-
-* Split tests into files and extract common testing utilities.
-
 ## License
 
-MIT
+ISC

@@ -2,6 +2,12 @@
 
 set -e
 
+unnecessary_blocks=(
+    --remove-section=.eh_frame
+    --remove-section=.gnu.version
+    --remove-section=.hash
+)
+
 main() {
     local name=$(basename "$1" .asm)
     if [[ "$2" == '--debug' ]]; then
@@ -10,16 +16,13 @@ main() {
         nasm -f elf64 "$1"
     fi
     if grep -q '##LINK_LIBC##' "$1"; then
-        #ld -o "$name" -dynamic-linker /lib64/ld-linux-x86-64.so.2 \
-        #        -lc --entry=main "$name".o
-        #gcc "$name".o -o "$name"
-        echo "Fuck this, it's too big."
+        ld -o "$name" -dynamic-linker /lib64/ld-linux-x86-64.so.2 -lc --entry=main "$name".o
     else
         ld -o "$name" "$name".o
     fi
     if [[ "$2" != '--debug' ]]; then
         strip --strip-all "$name"
-        strip --remove-section=.note.gnu.build-id "$name"
+        strip "${unnecessary_blocks[@]}" "$name"
     fi
     rm "$name".o
 }
